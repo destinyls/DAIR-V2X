@@ -1,0 +1,1 @@
+python cooperative-dataset/convert_to_kitti.py --src_root ~/DataSets/DAIR-V2X/Coopertive-Dataset/ --dest_root ~/DataSets/DAIR-V2X/Coopertive-Dataset-KITTI/infrastructure-side
