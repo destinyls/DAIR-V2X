@@ -116,20 +116,18 @@ def remove_background(image, label_file):
     boxes = load_boxes(label_file)
     for box in boxes:
         empty_image[int(box[1]):int(box[3]), int(box[0]):int(box[2]), :] = image[int(box[1]):int(box[3]), int(box[0]):int(box[2]), :]
-        print(empty_image.shape, box)
-        print(empty_image[int(box[1]):int(box[3]), int(box[0]):int(box[2]), :].shape)
     return empty_image
             
 def main(src_root, dest_root, split='train', img_id=0):
     if split == 'train':
         src_dir = os.path.join(src_root, "training")
         dest_dir = os.path.join(dest_root, "training")
-        img_path = "training-image_2a"
+        img_path_list = ["training-image_2a", "training-image_2b", "training-image_2c", "training-image_2d"]
         depth_img_path = "training-depth_2"
     else:
         src_dir = os.path.join(src_root, "validation")
         dest_dir = os.path.join(dest_root, "training")
-        img_path = "validation-image_2"
+        img_path_list = ["validation-image_2"]
         depth_img_path = "validation-depth_2"
         
     os.makedirs(dest_dir, exist_ok=True)
@@ -144,7 +142,6 @@ def main(src_root, dest_root, split='train', img_id=0):
     imageset_txt = os.path.join(dest_dir, "../", "ImageSets", "train.txt" if split=='train' else 'val.txt')
     imageset_json = os.path.join(dest_dir, "../", "ImageSets", "train.json" if split=='train' else 'val.json')
 
-    src_img_path = os.path.join(src_dir, "../", img_path)
     src_depth_img_path = os.path.join(src_dir, "../", depth_img_path)
     src_label_path = os.path.join(src_dir, "label_2")
     src_calib_path = os.path.join(src_dir, "calib")
@@ -154,14 +151,21 @@ def main(src_root, dest_root, split='train', img_id=0):
     idx_list = [x.strip() for x in open(split_txt).readlines()]
     idx_list_valid = []
     for index in idx_list:
-        img_file = os.path.join(src_img_path, index + ".jpg")
-        if os.path.exists(img_file):
-            idx_list_valid.append(index)
-        
+        for img_path in img_path_list:
+            src_img_path = os.path.join(src_dir, "../", img_path)
+            img_file = os.path.join(src_img_path, index + ".jpg")
+            if os.path.exists(img_file):
+                idx_list_valid.append(index)
+                break
     img_id_list = []
     idx_map = dict()
     for index in tqdm(idx_list_valid):
-        src_img_file = os.path.join(src_img_path, index + ".jpg")
+        for img_path in img_path_list:
+            src_img_path = os.path.join(src_dir, "../", img_path)
+            img_file = os.path.join(src_img_path, index + ".jpg")
+            if os.path.exists(img_file):
+                src_img_file = img_file
+                break
         src_depth_img_file = os.path.join(src_depth_img_path, index + ".jpg")
         src_label_file = os.path.join(src_label_path, index + ".txt")
         src_calib_file = os.path.join(src_calib_path, index + ".txt")
