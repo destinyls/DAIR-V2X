@@ -1,4 +1,3 @@
-from email.mime import image
 import os
 import sys
 import argparse
@@ -179,7 +178,6 @@ def main(src_root, dest_root, split='train', img_id=0):
         
         idx_map[index] = "{:06d}".format(img_id)
         img_id_list.append(img_id)
-        img_id = img_id + 1
         
         # image_2
         img = cv2.imread(src_img_file)
@@ -195,6 +193,7 @@ def main(src_root, dest_root, split='train', img_id=0):
         # image_2 background_removed        
         empty_image = remove_background(img, dest_label_file)
         cv2.imwrite(os.path.join(dest_dir, "image_2_background_removed", '{:06d}.png'.format(img_id)), empty_image)
+        img_id = img_id + 1
         
     with open(imageset_txt,'w') as f:
         for idx in img_id_list:
