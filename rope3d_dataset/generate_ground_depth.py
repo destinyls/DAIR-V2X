@@ -49,7 +49,7 @@ def load_P(calib_file):
 def generate_depth(P, denorm, point2d):
     locs = decode_location(P, point2d, 10).T
     ground_locs = calCoordinateFrom2PointsAndPlane(locs, denorm)
-    depths = ground_locs[:, 2].reshape(1080, 1920, 1)
+    depths = ground_locs[:, :3].reshape(1080, 1920, 3)
     depths = np.clip(depths, 0, 255)
     
     return depths
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     kitti_root = args.kitti_root
     calib_dir = os.path.join(kitti_root, "training", "calib")
     denorm_dir = os.path.join(kitti_root, "training", "denorm")
-    depth_equation_dir = os.path.join(kitti_root, "training", "depth_equation")
+    depth_equation_dir = os.path.join(kitti_root, "training", "depth_equation_xyz")
     os.makedirs(depth_equation_dir, exist_ok=True)
 
     xx1, yy1 = np.meshgrid(np.arange(0, 1920, 1), np.arange(0, 1080, 1))
